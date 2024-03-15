@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/PaperNav :: PaperNav"></div>
+<script th:inline="javascript">
+    var single = [[${exam}]];
+    var testtime = single.testtime;
+    //  var _minute = parseInt(testtime);
+    //  var _expiresHours = _minute * 60 * 1000;
+    //
+    // // 方法一
+    //  $(function() {
+    //      var _minute = parseInt("${single.testtime}");
+    //      var _expiresHours = _minute * 60 * 1000;
+    //
+    //      if(!hasSetCookie()){
+    //          addCookie("${single.pid}", _expiresHours, _expiresHours);
+    //      }
+    //      settime($("#remainTime"));
+    //  });
+    //  function hasSetCookie(){
+    //      var strCookie = document.cookie;
+    //      var arrCookie = strCookie.split("; ");
+    //      for (var i = 0; i < arrCookie.length; i++) {
+    //          var arr = arrCookie[i].split("=");
+    //          if (arr[0] == "${single.pid}") {
+    //              return true;
+    //          }
+    //      };
+    //      return false;
+    //  }
+    //  //开始倒计时
+    //  function settime(remainTime) {
+    //      var _countdown = parseInt(getCookieValue("${single.pid}")) / 1000;
+    //
+    //      if (_countdown <= 0) {
+    //          warn("提示!","考试时间到！");
+    //          endExam();
+    //      } else {
+    //          var _second = _countdown % 60;
+    //          var _minute = parseInt(_countdown / 60) % 60;
+    //          var _hour = parseInt(parseInt(_countdown / 60) / 60);
+    //          if (_hour < 10)
+    //              _hour = "0" + _hour.toString();
+    //          if (_second < 10)
+    //              _second = "0" + _second.toString();
+    //          if (_minute < 10)
+    //              _minute = "0" + _minute.toString();
+    //          remainTime.html(_hour + ":" + _minute + ":" + _second);
+    //          _countdown--;
+    //          editCookie("${single.pid}", _countdown * 1000, _countdown * 1000);
+    //      }
+    //      //每1000毫秒执行一次
+    //      setTimeout(function() {
+    //          settime(remainTime);
+    //      }, 1000);
+    //  };
+    //
+    //  // 结束考试
+    //  function endExam(){
+    //      $("#btnSubmit").trigger("click");
+    //  }
+    //  // 添加cookie
+    //  function addCookie(name, value, expiresHours) {
+    //      var cookieString = name + "=" + escape(value); //escape() 函数可对字符串进行编码，这样就可以在所有的计算机上读取该字符串。
+    //      //判断是否设置过期时间,0代表关闭浏览器时失效
+    //      if (expiresHours > 0) {
+    //          var date = new Date();
+    //          date.setTime(date.getTime() + expiresHours * 1000);
+    //          cookieString = cookieString + ";expires=" + date.toUTCString();
+    //      }
+    //      document.cookie = cookieString;
+    //  }
+    //  //修改cookie的值
+    //  function editCookie(name, value, expiresHours) {
+    //      var cookieString = name + "=" + escape(value);
+    //      if (expiresHours > 0) {
+    //          var date = new Date();
+    //          date.setTime(date.getTime() + expiresHours * 1000); //单位是毫秒
+    //          cookieString = cookieString + ";expires=" + date.toGMTString();
+    //      }
+    //      document.cookie = cookieString;
+    //  }
+    //  //根据名字获取cookie的值
+    //  function getCookieValue(name) {
+    //      var strCookie = document.cookie;
+    //      var arrCookie = strCookie.split("; ");
+    //      for (var i = 0; i < arrCookie.length; i++) {
+    //          var arr = arrCookie[i].split("=");
+    //          if (arr[0] == name) {
+    //              return unescape(arr[1]);
+    //              break;
+    //          } else {
+    //              continue;
+    //          };
+    //      };
+    //  }
+
+    //刷新重置存在bug
+
+    var examTime = testtime * 60;
+    var useTime = 0, remainTime = examTime;
+
+    // 显示使用时间和剩余时间
+    function showCount(){
+        if(remainTime==0){
+            document.getElementById("myForm").submit();
+        }
+        useTime+=1;
+        remainTime-=1;
+        var hourU=Math.floor(useTime/3600);
+        var minuteU=Math.floor((useTime-hourU*3600)/60);
+        var secondU=Math.floor(useTime-hourU*3600-minuteU*60);
+        document.getElementById("useTime").innerHTML=format(hourU)+":"+format(minuteU)+":"+format(secondU);
+
+        var hourR=Math.floor(remainTime/3600);
+        var minuteR=Math.floor((remainTime-hourR*3600)/60);
+        var secondR=Math.floor(remainTime-hourR*3600-minuteR*60);
+        document.getElementById("remainTime").innerHTML=format(hourR)+":"+format(minuteR)+":"+format(secondR);
+    }
+
+    // 格式化日期数字
+    function format(timeNumber){
+        if(timeNumber==0){
+            return "00";
+        }else if(timeNumber<10){
+            return "0"+timeNumber;
+        }else{
+            return timeNumber;
+        }
+    }
+    window.setInterval("showCount()",1000);
+
+    window.onload = function(){
+        var nowDate = new Date();
+        var str = nowDate.getFullYear()+"-"+(nowDate.getMonth() + 1)+"-"+nowDate.getDate()+" "+nowDate.getHours()+":"+nowDate.getMinutes()+":"+nowDate.getSeconds();
+        document.getElementById("tjtime").value=str;
+    }
+    //$('#tjtime').val(tjtime);
+</script>
+<main class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading text-center">
+            <h3 class="panel-title" th:text="${exam.pname}"></h3>
+        </div>
+        <div class="panel-body">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <input type="hidden" th:value="${exam.testtime}" id="testtime">
+                        <p data-toggle="collapse" data-parent="#accordion">一，单选题（共 <span th:text="${cont}"></span> 题，每题<span id="" th:text="${exam.singlecore}"></span>分）&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;考试时间：<strong><span th:text="${exam.testtime}"></span>分钟</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            计时：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font id="useTime" style="font-weight: bold;"></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            剩余时间：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font id="remainTime" style="font-weight: bold;color: red"></font></p>
+                    </h4>
+                </div>
+                <form th:action="@{/PaperScore}" method="post" role="myForm">
+                    <input type="hidden" name="eid" th:value="${exam.eid}">
+                    <input type="hidden" name="pname" th:value="${exam.pname}">
+                    <input type="hidden" name="userid" th:value="${session.lis.getUserid()}">
+                    <input type="hidden" id="tjtime" name="tjtime" value=""/>
+                    <div id="Radio" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <ol type="1">
+                                <div class="subject" th:each="single:${session.single}">
+                                    <li th:text="${single.scontent}"></li>
+                                    <ol style="list-style:none;">
+                                        <input type="hidden" name="sid" th:value="${single.sid}">
+                                        <li><label><input type="radio" value="A" class="rad" th:name="${single.sid}" th:text="'A:'+${single.sa}"></label></li>
+                                        <li><label><input type="radio" value="B" class="rad" th:name="${single.sid}" th:text="'B:'+${single.sb}"></label></li>
+                                        <li><label><input type="radio" value="C" class="rad" th:name="${single.sid}" th:text="'C:'+${single.sc}"></label></li>
+                                        <li><label><input type="radio" value="D" class="rad" th:name="${single.sid}" th:text="'D:'+${single.sd}"></label></li>
+                                    </ol>
+                                </div>
+                            </ol>
+                            <h4 class="panel-title">
+
+                                <p data-toggle="collapse" data-parent="#accordion">二，多选题（共 <span th:text="${cont1}"></span> 题，每题<span id="" th:text="${exam.singlecore}"></span>分）</p>
+                            </h4>
+                            <ol type="2">
+                                <div class="subject" th:each="multiple:${session.multiple}">
+                                    <li th:text="${multiple.scontent}"></li>
+                                    <ol style="list-style:none;">
+                                        <input type="hidden" name="sid" th:value="${multiple.sid}">
+                                        <li><label><input type="checkbox" value="A" class="rad" th:name="${multiple.sid}" th:text="'A:'+${multiple.sa}"></label></li>
+                                        <li><label><input type="checkbox" value="B" class="rad" th:name="${multiple.sid}" th:text="'B:'+${multiple.sb}"></label></li>
+                                        <li><label><input type="checkbox" value="C" class="rad" th:name="${multiple.sid}" th:text="'C:'+${multiple.sc}"></label></li>
+                                        <li><label><input type="checkbox" value="D" class="rad" th:name="${multiple.sid}" th:text="'D:'+${multiple.sd}"></label></li>
+                                    </ol>
+                                </div>
+                            </ol>
+                            <button class="btn btn-success" type="submit" onclick="getValue()">交卷</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<script th:inline="javascript">
+    var cont = [[${cont}]];
+    var cont1 =[[${cont1}]];
+    function getValue(){
+        //单选
+        var radio = document.getElementsByClassName("rad");
+
+        var studentkeys = new Array();
+        for (i =0; i<radio.length; i++) {
+            if (radio[i].checked) {
+                console.log(radio[i].value);
+                studentkeys.push(radio[i].value);
+            }
+        }
+
+        if( studentkeys.length < cont||studentkeys.length < cont1){
+            confirm("还有未选择的题目,是否提交？")
+        }
+        else{
+            confirm('将提交该试卷，是否继续?');
+
+            // if(confirm('将提交该试卷，是否继续?')){
+            //     $.ajax({
+            //         type : 'POST',
+            //         url:  '/PaperScore',
+            //         contentType: 'application/x-www-form-urlencoded',
+            //         data:  {"studentkeys": studentkeys},
+            //         success : function(data) {
+            //         }
+            //     });
+            //     // window.location.href="PaperScore?stukeys="+stukeys;
+            // }
+            // location.href = "<%=basePath%>/exam/saveexam.do?examid=" + ${examinfo.id}+
+            //     '&studentid='+${sessionScope.studentsession.id} + '&answerchoice='+ answerchoice+'&answerjudge='+ answerjudge;
+            // alert("选择答案" +  answerchoice + "填空题答案" + answerjudge);
+        }
+    }
+</script>
+</body>
+</html>

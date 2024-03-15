@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <style>
+        .lb{
+            height: 100%;
+            width: 100%;
+            border-width:0px;
+            border-top-style: none;
+            border-right-style: none;
+            border-left-style: none;
+            border-bottom-style: none;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap login_wrap">
+    <div class="content">
+
+        <div class="logo"></div>
+
+        <div class="login_box">
+
+            <div class="login_form">
+                <div class="login_title">
+                    注册
+                </div>
+                <form th:action="@{/CanRegister}" method="post">
+                    <input name="roleid" value="2" type="hidden"/>
+                    <div class="ececk_warning"><span>学号/工号</span></div>
+                    <div class="form_text_ipt">
+                        <input name="username" type="text" placeholder="学号">
+                    </div>
+                    <div class="ececk_warning"><span>学号/工号</span></div>
+                    <div class="form_text_ipt">
+                        <input name="userpwd" type="password" placeholder="密码">
+                    </div>
+                    <div class="ececk_warning"><span>密码不能为空</span></div>
+                    <div class="form_text_ipt">
+                        <input name="truename" type="text" placeholder="真实姓名">
+                    </div>
+                    <div class="ececk_warning"><span>真实姓名不能为空</span></div>
+                    <div class="form_text_ipt">
+                       <select name="classid" class="lb">
+                           <option name="classid" th:each="pjclass : ${list}" th:value="${pjclass.classid}" th:text="${pjclass.classname}"></option>
+                       </select>
+                    </div>
+                    <div class="ececk_warning"><span>班级不能为空</span></div>
+                    <div id="nogg" style="text-align: center"><span style="color: red;text-align: center" id="sb" th:text="${session.cg}" />
+                        <span style="color: red;text-align: center" id="sb1" th:text="${session.cz}" />
+                        <span style="color: red;text-align: center" id="sb2" th:text="${session.wk}" />
+                    </div>
+
+                    <script >
+                        window.onload = function(){
+                            //要执行的js代码
+                            var sb = document.getElementById("sb").innerText;
+                            if(sb!=""){
+                                setTimeout(function(){document.getElementById("nogg").style.display="none";location.replace("./logout")},1000);
+                            }
+                        }
+                        var sb1 = document.getElementById("sb1").innerText;
+                        if(sb1!=""){
+                            setTimeout(function(){document.getElementById("nogg").style.display="none";location.replace("./zclogout")},9000);
+                        }
+                        var sb2 = document.getElementById("sb2").innerText;
+                        if(sb2!=""){
+                            setTimeout(function(){document.getElementById("nogg").style.display="none";location.replace("./zclogout")},1000);
+                        }
+                    </script>
+                    <div class="form_btn">
+                        <button type="submit">注册</button>
+                    </div>
+                    <div class="form_reg_btn">
+                        <span>已有帐号？</span><a th:href="@{login}">马上登录</a>
+                    </div>
+                </form>
+                <div class="other_login">
+                    <div class="other_login">
+                        <div class="left other_left">
+                            <span>其它登录方式</span>
+                        </div>
+                        <div class="right other_right">
+                            <a href="#"><i class="fa fa-qq fa-2x"></i></a>
+                            <a href="#"><i class="fa fa-weixin fa-2x"></i></a>
+                            <a href="#"><i class="fa fa-weibo fa-2x"></i></a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/jquery.min.js" ></script>
+<script type="text/javascript" src="js/common.js" ></script>
+</body>
+</body>
+</html>

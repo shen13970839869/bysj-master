@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <div th:replace="include/bootstrap :: bootstrap"></div>
+</head>
+<body>
+<div th:replace="include/AdminNav :: AdminNav"></div>
+<div class="table-responsive" style="margin-left: 18%">
+    <table class="table table-striped"  >
+        <thead>
+        <tr>
+            <th colspan="5" style="text-align:left ;font-size: 20px"><button class="line btn btn-primary btn-sm" onclick="add()" >添加老师</button>&nbsp;&nbsp;&nbsp;
+        </tr>
+        <tr>
+            <th>编号</th>
+            <th>工号</th>
+            <th>密码</th>
+            <th>姓名</th>
+            <th>班级</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="teachers: ${teachers.getContent()}">
+            <td><li type=""></li></td>
+            <td th:text="${teachers.username}"></td>
+            <td th:text="${teachers.userpwd}"></td>
+            <td th:text="${teachers.truename}"></td>
+            <td th:text="${teachers.classid}"></td>
+            <td>
+                <a th:onclick="'javascript:edit(\''+${teachers.userid}+'\');'" style="text-decoration: none;">
+                    <button class="btn btn-default" style="width: 50px;height: 30px;background: #3e8f3e">修改</button>
+                </a>
+                <a th:onclick="'javascript:trash(\''+${teachers.userid}+'\');'" style="text-decoration: none;"
+                   data-toggle="modal" data-target="#trashModal">
+                    <button class="btn btn-default" style="width: 50px;height: 30px;background: red">
+                        删除
+                    </button>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row" style="margin-left: 18%">
+    <!--分页文字信息  -->
+    <div class="col-md-6">当前 <span th:text="${teachers.getNumber()} + 1"></span>页,总<span th:text="${teachers.totalPages}"></span>
+        页,总 <span th:text="${teachers.totalElements}"></span> 道题目</div>
+    <!-- 分页条信息 -->
+    <div class="col-md-6">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li><a th:href="@{/AdminTeacherManage}">首页</a></li>
+                <li><a th:href="@{/AdminTeacherManage(pageNum = ${teachers.hasPrevious()} ? ${teachers.getNumber() } : 1)}">上一页</a></li>
+                <li><a th:href="@{/AdminTeacherManage(pageNum = ${teachers.hasNext()} ? ${teachers.getNumber()} + 2 : ${teachers.totalPages})}">下一页</a></li>
+                <li><a th:href="@{/AdminTeacherManage(pageNum = ${teachers.totalPages})}">末页</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</div>
+<div class="modal fade" id="addch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="my" style="text-align:center">添加老师</h4>
+            </div>
+            <form class="form-horizontal" th:action="@{/addTeacher}" method="post">
+                <div class="modal-body">
+                    <input name="roleid" value="1" hidden="hidden"/>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">工号</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" id="username">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="userpwd" class="form-control" id="userpwd">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label class="col-sm-2 control-label">姓名</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="truename" class="form-control" id="truename">
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属班级</label>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="classid" name="classid">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" id="addbut">提交</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- Modal编辑模态框 -->
+<div class="modal fade" id="editch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myedit">编辑</h4>
+            </div>
+            <form class="form-horizontal" th:action="@{/updateTeacher}" method="post">
+                <div class="modal-body">
+                    <input name="userid" id="userid"  hidden="hidden"/>
+                    <input name="roleid" value="1" hidden="hidden"/>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">工号</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="username" class="form-control" id="username1">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="userpwd" class="form-control" id="userpwd1">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">姓名</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="truename" class="form-control" id="truename1">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">所属班级</label>
+                        <div class="col-sm-5">
+                            <select class="form-control" id="classid1" name="classid">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" id="upaddbut">提交</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!--删除的模态框-->
+<div class="modal fade" id="trashModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模糊框头部 -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title">删除！</h4>
+            </div>
+            <!-- 模糊框主体 -->
+            <div class="modal-body">
+                <strong>你确定要删除吗？</strong>
+                （将删除与该数据相关联的所有数据）
+            </div>
+            <!-- 模糊框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="delSure btn btn-info" data-dismiss="modal">确定</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /.container-fluid -->
+</div>
+
+<!-- /#page-wrapper -->
+</div>
+
+</div>
+<script>
+    //添加
+    function add() {
+        getpoint();
+        $("#addch").modal({
+            backdrop: "static"
+        });
+    };
+    function getpoint() {
+        // $("#classid").empty();
+        $.ajax({
+            url: '/findAllClass',
+            type: 'POST',
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    $("#classid").append("<option value='" + data[i].classid + "'>" + data[i].classname + "</option>");
+                }
+            }
+        });
+    }
+    // 编辑信息的方法
+    function edit(userid) {
+        $.ajax({
+            url: '/findAllClass',
+            type: 'POST',
+            success: function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    $("#classid1").append("<option value='" + data[i].classid + "'>" + data[i].classname + "</option>");
+                }
+            }
+        });
+        if (!userid) {
+            alert("error");
+        } else {
+            // 先去查询数据
+            $.ajax({
+                url: '/TeacherEdit',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify({
+                    userid: userid
+                }),
+                success: function (data) {
+                    $("#userid").val(data.userid);
+                    $("#username1").val(data.username)
+                    $("#userpwd1").val(data.userpwd);
+                    $("#truename1").val(data.truename);
+                    $("#classid1").val(data.classid);
+                    $("#editch").modal('show');
+                },
+                error: function () {
+                    alert("错误");
+                }
+            });
+        }
+    }
+    //删除
+    function trash(userid) {
+        if (!userid) {
+            alert("error");
+        } else {
+            $(".delSure").click(function () {
+                $.ajax({
+                    url: '/deleteTeacher?userid=' + userid,
+                    type: 'POST',
+                    success: function (data) {
+                        $("body").html(data);
+                    }
+                });
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
